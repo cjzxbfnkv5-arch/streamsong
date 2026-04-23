@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Streamsong">
+<title>Streamsong Trip</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
+  :root{--green:#1a3a2a;--fairway:#2d5a3d;--gold:#c9a84c;--rough:#4a7c59;--white:#fafaf7;--ink:#1a1a18;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--white);min-height:100vh;padding:14px;max-width:480px;margin:0 auto;}
+  h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:var(--gold);text-align:center;margin-bottom:1px;}
+  .sub{text-align:center;font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--rough);margin-bottom:15px;}
+
+.tabs{display:flex;gap:4px;margin-bottom:13px;background:rgba(0,0,0,0.3);border-radius:10px;padding:4px;}
+.tab{flex:1;padding:7px 2px;text-align:center;border-radius:7px;font-family:‘Bebas Neue’,sans-serif;font-size:0.88rem;letter-spacing:1px;cursor:pointer;color:var(–rough);transition:all .2s;border:none;background:transparent;}
+.tab.active{background:var(–gold);color:var(–ink);}
+.panel{display:none;}.panel.active{display:block;}
+
+.card{background:rgba(255,255,255,0.07);border-radius:12px;padding:13px;margin-bottom:11px;}
+.card h3{font-family:‘Bebas Neue’,sans-serif;font-size:1rem;letter-spacing:2px;color:var(–gold);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.info{font-size:0.69rem;color:rgba(255,255,255,0.35);margin-bottom:8px;line-height:1.5;}
+
+input[type=text],input[type=number],select{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:7px;color:var(–white);padding:7px 9px;font-family:‘DM Sans’,sans-serif;font-size:0.83rem;outline:none;width:100%;}
+select option{background:#1a3a2a;}
+.row{display:flex;gap:7px;align-items:center;margin-bottom:7px;}
+.lbl{font-size:0.73rem;color:rgba(255,255,255,0.5);white-space:nowrap;width:88px;flex-shrink:0;}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+.ccard{background:rgba(0,0,0,0.22);border-radius:9px;padding:11px;margin-bottom:9px;}
+.ccard .dlbl{font-family:‘Bebas Neue’,sans-serif;font-size:0.95rem;letter-spacing:2px;color:var(–gold);margin-bottom:6px;}
+.ctags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
+.ctag{background:rgba(255,255,255,0.06);border-radius:5px;padding:3px 9px;font-size:0.68rem;color:rgba(255,255,255,0.45);}
+.ctag b{color:var(–gold);font-family:‘Bebas Neue’,sans-serif;font-size:0.88rem;font-weight:400;}
+.hcp-row{display:flex;gap:5px;flex-wrap:wrap;}
+.hcp-chip{display:flex;align-items:center;gap:4px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:6px;padding:3px 9px;font-size:0.68rem;}
+.hcp-chip .cn{color:rgba(255,255,255,0.45);}
+.hcp-chip .cv{font-family:‘Bebas Neue’,sans-serif;font-size:0.92rem;color:var(–gold);}
+
+.si-outer{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.si-cell{background:rgba(0,0,0,0.2);border-radius:7px;padding:5px;}
+.si-cell .hn{font-family:‘Bebas Neue’,sans-serif;color:var(–gold);font-size:0.8rem;text-align:center;margin-bottom:2px;}
+.si-cell .ins{display:flex;gap:3px;}
+.si-cell input{padding:3px;font-size:0.72rem;text-align:center;}
+
+.dtabs{display:flex;gap:4px;margin-bottom:11px;}
+.dtab{flex:1;padding:6px;text-align:center;border-radius:6px;font-size:0.71rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(–rough);background:rgba(0,0,0,0.2);border:none;font-family:‘DM Sans’,sans-serif;font-weight:500;transition:all .2s;}
+.dtab.active{background:var(–fairway);color:var(–white);}
+.badge{font-size:0.6rem;background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.4);}
+
+.hrow{display:flex;align-items:center;gap:5px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.hnum{width:19px;font-family:‘Bebas Neue’,sans-serif;font-size:0.92rem;color:var(–gold);text-align:center;flex-shrink:0;}
+.hpar{width:17px;text-align:center;color:rgba(255,255,255,0.3);font-size:0.68rem;flex-shrink:0;}
+.hsi{width:17px;text-align:center;font-size:0.62rem;color:rgba(255,255,255,0.25);flex-shrink:0;}
+.scell{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;}
+.scell input{width:34px;padding:4px;text-align:center;font-size:0.78rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(–white);}
+.spts{font-family:‘Bebas Neue’,sans-serif;font-size:0.88rem;color:var(–gold);min-height:13px;}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(–gold);display:inline-block;position:absolute;top:1px;right:-3px;}
+
+.sbanner{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.schip{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:6px;padding:3px 9px;font-size:0.68rem;display:flex;align-items:center;gap:5px;}
+.schip .scn{font-weight:500;}
+.schip .scv{font-family:‘Bebas Neue’,sans-serif;font-size:0.95rem;color:var(–gold);}
+
+.wbadge{background:var(–gold);color:var(–ink);border-radius:4px;padding:2px 5px;font-size:0.6rem;font-weight:700;letter-spacing:1px;flex-shrink:0;}
+.pbtn{padding:4px 5px;border-radius:5px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.5);font-size:0.65rem;cursor:pointer;transition:all .15s;font-family:‘DM Sans’,sans-serif;}
+.pbtn.sel{background:var(–fairway);border-color:var(–rough);color:var(–white);}
+.pbtn.lone{border-color:var(–gold);color:var(–gold);}
+.pbtn.lone.sel{background:rgba(201,168,76,0.22);}
+.rbtn{padding:3px 7px;border-radius:5px;border:1px solid rgba(255,255,255,0.1);background:transparent;font-size:0.68rem;cursor:pointer;transition:all .15s;color:rgba(255,255,255,0.4);}
+.rbtn.win{border-color:#4caf50;}.rbtn.win.sel{background:#4caf50;color:#fff;}
+.rbtn.los{border-color:#ef5350;}.rbtn.los.sel{background:#ef5350;color:#fff;}
+
+.mu{margin-bottom:13px;}
+.mu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.mu-names{font-size:0.76rem;}
+.mu-status{font-family:‘Bebas Neue’,sans-serif;font-size:1.05rem;letter-spacing:1px;}
+.mhrow{display:flex;align-items:center;gap:4px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.mhnum{width:19px;font-family:‘Bebas Neue’,sans-serif;color:var(–gold);font-size:0.88rem;text-align:center;flex-shrink:0;}
+.mbtn{flex:1;padding:4px 3px;border-radius:5px;border:1px solid rgba(255,255,255,0.1);background:transparent;font-size:0.66rem;cursor:pointer;color:rgba(255,255,255,0.4);transition:all .15s;}
+.mbtn.sa{background:rgba(96,165,250,0.22);border-color:#60a5fa;color:#60a5fa;}
+.mbtn.sb{background:rgba(74,222,128,0.2);border-color:#4ade80;color:#4ade80;}
+.mbtn.sc{background:rgba(249,115,22,0.2);border-color:#f97316;color:#f97316;}
+.mbtn.st{background:rgba(201,168,76,0.16);border-color:var(–gold);color:var(–gold);}
+.mrun{font-size:0.65rem;color:rgba(255,255,255,0.28);min-width:52px;text-align:right;}
+.mdot{display:inline-block;width:4px;height:4px;border-radius:50%;background:currentColor;margin-left:2px;vertical-align:middle;opacity:0.7;}
+
+.tbar{display:flex;gap:4px;margin-top:9px;padding:7px;background:rgba(201,168,76,0.08);border-radius:7px;}
+.tbar .tlbl{font-size:0.66rem;color:rgba(255,255,255,0.35);flex:none;width:52px;display:flex;align-items:center;}
+.tbar .tv{flex:1;text-align:center;font-family:‘Bebas Neue’,sans-serif;font-size:0.95rem;}
+
+.srow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.83rem;}
+.srow:last-child{border-bottom:none;}
+.pn{display:flex;align-items:center;gap:7px;}
+.amt{font-family:‘Bebas Neue’,sans-serif;font-size:1.12rem;letter-spacing:1px;}
+.pos{color:#66bb6a;}.neg{color:#ef5350;}.zer{color:rgba(255,255,255,0.28);}
+.lbrow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.rnk{font-family:‘Bebas Neue’,sans-serif;font-size:1.3rem;color:rgba(255,255,255,0.16);width:24px;}
+.rnk1{color:var(–gold);}
+.sub-sec{font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:8px 0 4px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.06);}
+
+.btn-go{width:100%;padding:12px;background:var(–gold);color:var(–ink);border:none;border-radius:9px;font-family:‘Bebas Neue’,sans-serif;font-size:1.1rem;letter-spacing:2px;cursor:pointer;margin-top:5px;}
+.btn-go:active{opacity:0.8;}
+
+/* Save indicator */
+#save-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(201,168,76,0.9);color:var(–ink);font-family:‘Bebas Neue’,sans-serif;letter-spacing:1px;font-size:0.85rem;padding:6px 18px;border-radius:20px;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;}
+#save-toast.show{opacity:1;}
+
+.reset-btn{background:rgba(239,83,80,0.15);border:1px solid rgba(239,83,80,0.3);color:#ef5350;border-radius:7px;padding:8px 14px;font-size:0.75rem;cursor:pointer;font-family:‘DM Sans’,sans-serif;width:100%;margin-top:6px;}
+</style>
+
+</head>
+<body>
+
+<h1>Streamsong</h1>
+<div class="sub">Mike · Jared · Phil · 3-Day Trip</div>
+<div id="save-toast">✓ Saved</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="sw('setup')">Setup</button>
+  <button class="tab" onclick="sw('scores')">Scores</button>
+  <button class="tab" onclick="sw('match')">Match</button>
+  <button class="tab" onclick="sw('summary')">$$$</button>
+</div>
+
+<!-- ══ SETUP ══ -->
+
+<div id="panel-setup" class="panel active">
+  <div class="card">
+    <h3>Players & Handicap Index</h3>
+    <div class="row"><div class="dot" style="background:#60a5fa"></div>
+      <input type="text" id="p1n" value="Mike Doniger" oninput="upSetup()">
+      <input type="number" id="p1h" value="7.7" step="0.1" min="0" max="54" style="width:72px;flex-shrink:0" oninput="upSetup()">
+    </div>
+    <div class="row"><div class="dot" style="background:#4ade80"></div>
+      <input type="text" id="p2n" value="Jared Davidson" oninput="upSetup()">
+      <input type="number" id="p2h" value="18.1" step="0.1" min="0" max="54" style="width:72px;flex-shrink:0" oninput="upSetup()">
+    </div>
+    <div class="row"><div class="dot" style="background:#f97316"></div>
+      <input type="text" id="p3n" value="Phil Schneider" oninput="upSetup()">
+      <input type="number" id="p3h" value="18.8" step="0.1" min="0" max="54" style="width:72px;flex-shrink:0" oninput="upSetup()">
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Courses</h3>
+    <div id="course-cards"></div>
+  </div>
+
+  <div class="card">
+    <h3>Hole Par & SI <span style="font-size:0.62rem;color:rgba(255,255,255,0.3);">tap day to edit</span></h3>
+    <div class="dtabs">
+      <button class="dtab active" id="sdt0" onclick="swSI(0)">Blue</button>
+      <button class="dtab" id="sdt1" onclick="swSI(1)">Black</button>
+      <button class="dtab" id="sdt2" onclick="swSI(2)">Red</button>
+    </div>
+    <div class="si-outer" id="si-grid"></div>
+  </div>
+
+  <div class="card">
+    <h3>Format Per Day</h3>
+    <div class="row"><div class="lbl">Day 1 Blue</div>
+      <select id="fmt1"><option value="wolf" selected>Wolf</option><option value="531">5-3-1</option><option value="stableford">Stableford</option></select></div>
+    <div class="row"><div class="lbl">Day 2 Black</div>
+      <select id="fmt2"><option value="531" selected>5-3-1</option><option value="wolf">Wolf</option><option value="stableford">Stableford</option></select></div>
+    <div class="row"><div class="lbl">Day 3 Red</div>
+      <select id="fmt3"><option value="stableford" selected>Stableford</option><option value="wolf">Wolf</option><option value="531">5-3-1</option></select></div>
+    <div class="info" style="margin-top:4px;">Round Robin Match Play runs as a side bet every day.</div>
+  </div>
+
+  <div class="card">
+    <h3>Bet Amounts</h3>
+    <div class="row"><div class="lbl">5-3-1 ($/pt)</div><input type="number" id="b531" value="5" min="1"></div>
+    <div class="row"><div class="lbl">Wolf ($/hole)</div><input type="number" id="bwolf" value="2" min="1"></div>
+    <div class="row"><div class="lbl">Stableford ($)</div><input type="number" id="bstab" value="10" min="1"></div>
+    <div class="row"><div class="lbl">Match Play ($)</div><input type="number" id="bmp" value="5" min="1"></div>
+  </div>
+
+<button class="btn-go" onclick="goScores()">Tee It Up →</button>
+<button class="reset-btn" onclick="resetAll()">🗑 Reset All Scores</button>
+
+</div>
+
+<!-- ══ SCORES ══ -->
+
+<div id="panel-scores" class="panel">
+  <div class="dtabs">
+    <button class="dtab active" onclick="swDay(0)">Blue</button>
+    <button class="dtab" onclick="swDay(1)">Black</button>
+    <button class="dtab" onclick="swDay(2)">Red</button>
+  </div>
+  <div id="sc"></div>
+</div>
+
+<!-- ══ MATCH ══ -->
+
+<div id="panel-match" class="panel">
+  <div class="dtabs" id="mdtabs">
+    <button class="dtab active" onclick="swMDay(0)">Blue</button>
+    <button class="dtab" onclick="swMDay(1)">Black</button>
+    <button class="dtab" onclick="swMDay(2)">Red</button>
+  </div>
+  <div id="mc"></div>
+</div>
+
+<!-- ══ SUMMARY ══ -->
+
+<div id="panel-summary" class="panel">
+  <div id="sumc"></div>
+</div>
+
+<script>
+// ── Course data ────────────────────────────────────────────────
+const COURSES = [
+  { name:'Streamsong Blue',  tee:'Black', slope:130, rating:71.8, par:72,
+    pars:[4,5,4,4,3,4,3,4,5, 3,4,4,4,5,4,3,5,4],
+    si:  [14,10,8,4,16,18,12,2,6, 15,1,11,17,9,7,13,5,3] },
+  { name:'Streamsong Black', tee:'Black', slope:130, rating:72.0, par:73,
+    pars:[5,4,4,5,3,4,3,4,4, 5,4,5,4,4,3,4,3,5],
+    si:  [12,16,4,2,6,18,14,8,10, 11,3,7,9,15,17,1,13,5] },
+  { name:'Streamsong Red',   tee:'Black', slope:132, rating:71.6, par:72,
+    pars:[4,5,4,4,4,3,5,3,4, 4,4,4,5,3,4,3,4,5],
+    si:  [4,2,14,16,6,18,12,10,8, 9,5,3,15,11,1,7,13,17] }
+];
+
+const C=['#60a5fa','#4ade80','#f97316'];
+const MU=[[0,1],[0,2],[1,2]];
+const MSEL=['sa','sb','sc'];
+const SAVE_KEY='streamsong_trip_v1';
+
+// ── Default state ──────────────────────────────────────────────
+function defaultState() {
+  return {
+    names:   ['Mike Doniger','Jared Davidson','Phil Schneider'],
+    indexes: [7.7, 18.1, 18.8],
+    fmts:    ['wolf','531','stableford'],
+    bets:    {b531:5, wolf:2, stab:10, mp:5},
+    sc:   Array(3).fill(0).map(()=>Array(3).fill(0).map(()=>Array(18).fill(''))),
+    wolf: Array(3).fill(0).map(()=>Array(18).fill(0).map(()=>({pi:-2,win:null}))),
+    mp:   Array(3).fill(0).map(()=>Array(3).fill(0).map(()=>Array(18).fill(null))),
+    day:0, mday:0, siDay:0
+  };
+}
+
+// ── Load / Save ────────────────────────────────────────────────
+let G = defaultState();
+
+function saveState() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      names:   G.names,
+      indexes: G.indexes,
+      fmts:    G.fmts,
+      bets:    G.bets,
+      sc:      G.sc,
+      wolf:    G.wolf,
+      mp:      G.mp
+    }));
+    showToast();
+  } catch(e) { console.warn('Save failed', e); }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    // Merge saved data into G, keeping defaults for anything missing
+    if (saved.names)   G.names   = saved.names;
+    if (saved.indexes) G.indexes = saved.indexes;
+    if (saved.fmts)    G.fmts    = saved.fmts;
+    if (saved.bets)    G.bets    = saved.bets;
+    if (saved.sc)      G.sc      = saved.sc;
+    if (saved.wolf)    G.wolf    = saved.wolf;
+    if (saved.mp)      G.mp      = saved.mp;
+  } catch(e) { console.warn('Load failed', e); }
+}
+
+let toastTimer;
+function showToast() {
+  const t = document.getElementById('save-toast');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1500);
+}
+
+function resetAll() {
+  if (!confirm('Reset all scores? This cannot be undone.')) return;
+  G.sc   = Array(3).fill(0).map(()=>Array(3).fill(0).map(()=>Array(18).fill('')));
+  G.wolf = Array(3).fill(0).map(()=>Array(18).fill(0).map(()=>({pi:-2,win:null})));
+  G.mp   = Array(3).fill(0).map(()=>Array(3).fill(0).map(()=>Array(18).fill(null)));
+  saveState();
+  render();
+  alert('Scores cleared ✓');
+}
+
+// ── Handicap ───────────────────────────────────────────────────
+function courseHcp(pi, d) {
+  const {slope,rating,par} = COURSES[d];
+  return Math.round(G.indexes[pi] * (slope/113) + (rating-par));
+}
+function getStroke(pi, hole, d) {
+  const ch = courseHcp(pi,d);
+  return ch>0 && COURSES[d].si[hole]<=ch;
+}
+function getStroke2(pi, hole, d) {
+  const ch = courseHcp(pi,d);
+  return ch>18 && COURSES[d].si[hole]<=(ch-18);
+}
+function netSc(d, pi, hole) {
+  const g = parseInt(G.sc[d][pi][hole]);
+  if (isNaN(g)) return null;
+  let s = getStroke(pi,hole,d)?1:0;
+  if (getStroke2(pi,hole,d)) s++;
+  return g-s;
+}
+function mpStrokes(ai, bi, d) {
+  const chA=courseHcp(ai,d), chB=courseHcp(bi,d);
+  const diff=Math.abs(chA-chB);
+  return chA<=chB ? [0,diff] : [diff,0];
+}
+
+// ── Setup UI ───────────────────────────────────────────────────
+function buildCourseCards() {
+  let html='';
+  COURSES.forEach((c,d)=>{
+    html+=`<div class="ccard">
+      <div class="dlbl">Day ${d+1} · ${c.name}</div>
+      <div class="ctags">
+        <div class="ctag">Tee <b>${c.tee}</b></div>
+        <div class="ctag">Par <b>${c.par}</b></div>
+        <div class="ctag">Rating <b>${c.rating}</b></div>
+        <div class="ctag">Slope <b>${c.slope}</b></div>
+      </div>
+      <div class="hcp-row" id="hprev${d}"></div>
+    </div>`;
+  });
+  document.getElementById('course-cards').innerHTML=html;
+}
+
+function updateHcpPreviews() {
+  for(let d=0;d<3;d++){
+    const el=document.getElementById('hprev'+d);
+    if(!el) continue;
+    let html='';
+    G.names.forEach((n,pi)=>{
+      const ch=courseHcp(pi,d);
+      html+=`<div class="hcp-chip"><span class="cn" style="color:${C[pi]};">${n.split(' ')[0]}</span><span class="cv">${ch}</span><span class="cn">strokes</span></div>`;
+    });
+    el.innerHTML=html;
+  }
+}
+
+function syncSetupFields() {
+  // Push G state back into DOM fields (used after loadState)
+  document.getElementById('p1n').value=G.names[0];
+  document.getElementById('p2n').value=G.names[1];
+  document.getElementById('p3n').value=G.names[2];
+  document.getElementById('p1h').value=G.indexes[0];
+  document.getElementById('p2h').value=G.indexes[1];
+  document.getElementById('p3h').value=G.indexes[2];
+  document.getElementById('fmt1').value=G.fmts[0];
+  document.getElementById('fmt2').value=G.fmts[1];
+  document.getElementById('fmt3').value=G.fmts[2];
+  document.getElementById('b531').value=G.bets.b531;
+  document.getElementById('bwolf').value=G.bets.wolf;
+  document.getElementById('bstab').value=G.bets.stab;
+  document.getElementById('bmp').value=G.bets.mp;
+}
+
+function buildSIGrid() {
+  const d=G.siDay, c=COURSES[d];
+  let html='';
+  for(let h=0;h<18;h++){
+    html+=`<div class="si-cell">
+      <div class="hn">H${h+1}</div>
+      <div class="ins">
+        <input type="number" id="par${h}" value="${c.pars[h]}" min="3" max="6" placeholder="P" oninput="COURSES[${d}].pars[${h}]=parseInt(this.value)||4;saveState()">
+        <input type="number" id="si${h}" value="${c.si[h]}" min="1" max="18" placeholder="SI" oninput="COURSES[${d}].si[${h}]=parseInt(this.value)||${h+1};saveState()">
+      </div>
+    </div>`;
+  }
+  document.getElementById('si-grid').innerHTML=html;
+}
+
+function swSI(d) {
+  G.siDay=d;
+  ['sdt0','sdt1','sdt2'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===d));
+  buildSIGrid();
+}
+
+function upSetup() {
+  G.names=[
+    document.getElementById('p1n').value||'P1',
+    document.getElementById('p2n').value||'P2',
+    document.getElementById('p3n').value||'P3'
+  ];
+  G.indexes=[
+    parseFloat(document.getElementById('p1h').value)||0,
+    parseFloat(document.getElementById('p2h').value)||0,
+    parseFloat(document.getElementById('p3h').value)||0
+  ];
+  updateHcpPreviews();
+  saveState();
+}
+
+function goScores() {
+  upSetup();
+  G.fmts=[
+    document.getElementById('fmt1').value,
+    document.getElementById('fmt2').value,
+    document.getElementById('fmt3').value
+  ];
+  G.bets={
+    b531:  parseFloat(document.getElementById('b531').value)||5,
+    wolf:  parseFloat(document.getElementById('bwolf').value)||2,
+    stab:  parseFloat(document.getElementById('bstab').value)||10,
+    mp:    parseFloat(document.getElementById('bmp').value)||5
+  };
+  saveState();
+  sw('scores');
+}
+
+// ── Navigation ─────────────────────────────────────────────────
+function sw(t) {
+  ['setup','scores','match','summary'].forEach((x,i)=>{
+    document.querySelectorAll('.tab')[i].classList.toggle('active',x===t);
+  });
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  if(t==='scores')  render();
+  if(t==='match')   renderMatch();
+  if(t==='summary') renderSum();
+}
+function swDay(d){
+  G.day=d;
+  document.querySelectorAll('#panel-scores .dtab').forEach((t,i)=>t.classList.toggle('active',i===d));
+  render();
+}
+function swMDay(d){
+  G.mday=d;
+  document.querySelectorAll('#mdtabs .dtab').forEach((t,i)=>t.classList.toggle('active',i===d));
+  renderMatch();
+}
+
+// ── Shared helpers ─────────────────────────────────────────────
+function strokeBanner(d){
+  let html='<div class="sbanner">';
+  G.names.forEach((n,pi)=>{
+    const ch=courseHcp(pi,d);
+    html+=`<div class="schip"><span class="scn" style="color:${C[pi]};">${n.split(' ')[0]}</span><span class="scv">${ch}</span><span style="color:rgba(255,255,255,0.3);">strokes</span></div>`;
+  });
+  return html+'</div>';
+}
+function scoreHdr(){
+  let h=`<div style="display:flex;align-items:center;gap:5px;padding:2px 0;margin-bottom:2px;">
+    <div class="hnum" style="color:rgba(255,255,255,0.2);font-size:0.6rem;">H</div>
+    <div class="hpar" style="color:rgba(255,255,255,0.2);font-size:0.6rem;">P</div>
+    <div class="hsi" style="color:rgba(255,255,255,0.2);font-size:0.6rem;">SI</div>`;
+  G.names.forEach((n,i)=>{ h+=`<div class="scell"><span style="font-size:0.65rem;color:${C[i]};">${n.split(' ')[0]}</span></div>`; });
+  return h+'</div>';
+}
+
+// ── Render ─────────────────────────────────────────────────────
+function render(){
+  const d=G.day, fmt=G.fmts[d];
+  document.getElementById('sc').innerHTML=fmt==='wolf'?rWolf(d):fmt==='531'?r531(d):rStab(d);
+}
+
+// ── 5-3-1 ──────────────────────────────────────────────────────
+function pts531(nets){
+  if(nets.some(n=>n===null)) return [null,null,null];
+  const prizes=[5,3,1];
+  const sorted=[...nets].map((n,i)=>({n,i})).sort((a,b)=>a.n-b.n);
+  const pts=[0,0,0]; let i=0;
+  while(i<3){
+    let j=i; while(j<3&&sorted[j].n===sorted[i].n) j++;
+    const share=prizes.slice(i,j).reduce((a,b)=>a+b,0)/(j-i);
+    for(let k=i;k<j;k++) pts[sorted[k].i]=share;
+    i=j;
+  }
+  return pts;
+}
+function r531(d){
+  let html=`<div class="card"><h3>5-3-1 <span class="badge">${COURSES[d].name}</span></h3>
+    <div class="info">Net scores ranked each hole: Low=5 · Mid=3 · High=1. Ties split. Gold dot = stroke received.</div>`;
+  html+=strokeBanner(d)+scoreHdr();
+  const tot=[0,0,0];
+  for(let h=0;h<18;h++){
+    const par=COURSES[d].pars[h],si=COURSES[d].si[h];
+    const nets=G.names.map((_,pi)=>netSc(d,pi,h));
+    const pts=pts531(nets);
+    pts.forEach((p,pi)=>{if(p!==null)tot[pi]+=p;});
+    html+=`<div class="hrow"><div class="hnum">${h+1}</div><div class="hpar">${par}</div><div class="hsi">${si}</div>`;
+    G.names.forEach((_,pi)=>{
+      const s=getStroke(pi,h,d),s2=getStroke2(pi,h,d);
+      const val=G.sc[d][pi][h],p=pts[pi];
+      html+=`<div class="scell"><div style="position:relative;display:inline-block;">
+        <input type="number" value="${val}" min="1" max="20" onchange="G.sc[${d}][${pi}][${h}]=this.value;saveState();render()">
+        ${s?`<span class="sdot" style="${s2?'background:#ef9a9a':''}"></span>`:''}</div>
+        <div class="spts">${p!==null?p:''}</div></div>`;
+    });
+    html+='</div>';
+  }
+  html+=`<div class="tbar"><div class="tlbl">Pts</div>`;
+  G.names.forEach((_,pi)=>{html+=`<div class="tv" style="color:${C[pi]};">${tot[pi].toFixed(1)}</div>`;});
+  return html+'</div></div>';
+}
+
+// ── Wolf ───────────────────────────────────────────────────────
+function rWolf(d){
+  let html=`<div class="card"><h3>Wolf <span class="badge">${COURSES[d].name}</span></h3>
+    <div class="info">Wolf rotates each hole. Pick partner or go Lone Wolf (2× stakes). Net scores.</div>`;
+  html+=strokeBanner(d);
+  for(let h=0;h<18;h++){
+    const wi=h%3,w=G.wolf[d][h];
+    const oi=[0,1,2].filter(i=>i!==wi);
+    html+=`<div class="hrow" style="flex-wrap:wrap;gap:4px;">
+      <div class="hnum">${h+1}</div>
+      <div class="wbadge">🐺 ${G.names[wi].split(' ')[0]}</div>
+      <div style="display:flex;gap:3px;flex:1;">
+        <button class="pbtn ${w.pi===oi[0]?'sel':''}" onclick="wPick(${d},${h},${oi[0]})">${G.names[oi[0]].split(' ')[0]}</button>
+        <button class="pbtn ${w.pi===oi[1]?'sel':''}" onclick="wPick(${d},${h},${oi[1]})">${G.names[oi[1]].split(' ')[0]}</button>
+        <button class="pbtn lone ${w.pi===-1?'sel':''}" onclick="wPick(${d},${h},-1)">Lone</button>
+      </div>
+      <div style="display:flex;gap:3px;">
+        <button class="rbtn win ${w.win===true?'sel':''}" onclick="wRes(${d},${h},true)">W</button>
+        <button class="rbtn los ${w.win===false?'sel':''}" onclick="wRes(${d},${h},false)">L</button>
+      </div></div>`;
+  }
+  return html+'</div>';
+}
+function wPick(d,h,pi){G.wolf[d][h].pi=pi;saveState();render();}
+function wRes(d,h,win){G.wolf[d][h].win=win;saveState();render();}
+
+// ── Stableford ─────────────────────────────────────────────────
+function stabPts(net,par){
+  if(net===null)return null;
+  const x=net-par;
+  if(x<=-2)return 5;if(x===-1)return 4;if(x===0)return 3;
+  if(x===1)return 2;if(x===2)return 1;return 0;
+}
+function rStab(d){
+  let html=`<div class="card"><h3>Stableford <span class="badge">${COURSES[d].name}</span></h3>
+    <div class="info">Alb=5 Eagle=4 Birdie=3 Par=2 Bogey=1 Dbl+=0. Net scores. Gold dot = stroke received.</div>`;
+  html+=strokeBanner(d)+scoreHdr();
+  const tot=[0,0,0];
+  for(let h=0;h<18;h++){
+    const par=COURSES[d].pars[h],si=COURSES[d].si[h];
+    html+=`<div class="hrow"><div class="hnum">${h+1}</div><div class="hpar">${par}</div><div class="hsi">${si}</div>`;
+    G.names.forEach((_,pi)=>{
+      const s=getStroke(pi,h,d),s2=getStroke2(pi,h,d);
+      const val=G.sc[d][pi][h],net=netSc(d,pi,h),pts=stabPts(net,par);
+      if(pts!==null)tot[pi]+=pts;
+      html+=`<div class="scell"><div style="position:relative;display:inline-block;">
+        <input type="number" value="${val}" min="1" max="20" onchange="G.sc[${d}][${pi}][${h}]=this.value;saveState();render()">
+        ${s?`<span class="sdot" style="${s2?'background:#ef9a9a':''}"></span>`:''}</div>
+        <div class="spts">${pts!==null?pts:''}</div></div>`;
+    });
+    html+='</div>';
+  }
+  html+=`<div class="tbar"><div class="tlbl">Pts</div>`;
+  G.names.forEach((_,pi)=>{html+=`<div class="tv" style="color:${C[pi]};">${tot[pi]}</div>`;});
+  return html+'</div></div>';
+}
+
+// ── Match Play ─────────────────────────────────────────────────
+function renderMatch(){
+  const d=G.mday;
+  let html=`<div class="card"><h3>Match Play <span class="badge">${COURSES[d].name}</span></h3>
+    <div class="info">3 simultaneous 1v1 matches. Strokes given by handicap difference. Dot = stroke on that hole.</div>`;
+  MU.forEach(([ai,bi],mi)=>{
+    const an=G.names[ai].split(' ')[0],bn=G.names[bi].split(' ')[0];
+    const [sA,sB]=mpStrokes(ai,bi,d);
+    const chA=courseHcp(ai,d),chB=courseHcp(bi,d);
+    const res=G.mp[d][mi];
+    const run=[]; let up=0;
+    for(let h=0;h<18;h++){if(res[h]==='a')up++;else if(res[h]==='b')up--;run.push(up);}
+    const thru=res.filter(r=>r!==null).length;
+    const last=thru>0?run[thru-1]:0,hl=18-thru;
+    let status=thru===0||last===0?'All Square':Math.abs(last)>hl?`${last>0?an:bn} wins ${Math.abs(last)}&${hl}`:`${last>0?an:bn} ${Math.abs(last)}UP thru ${thru}`;
+    const scol=last>0?C[ai]:last<0?C[bi]:'rgba(255,255,255,0.35)';
+    const hcpInfo=sA>0?`${an} gets ${sA} strokes`:sB>0?`${bn} gets ${sB} strokes`:'Level';
+    html+=`<div class="mu">
+      <div class="mu-head">
+        <div class="mu-names">
+          <span style="color:${C[ai]};font-weight:500;">${an}</span><span style="color:rgba(255,255,255,0.25);font-size:0.68rem;"> (${chA})</span>
+          <span style="color:rgba(255,255,255,0.28);"> vs </span>
+          <span style="color:${C[bi]};font-weight:500;">${bn}</span><span style="color:rgba(255,255,255,0.25);font-size:0.68rem;"> (${chB})</span>
+        </div>
+        <div class="mu-status" style="color:${scol};">${status}</div>
+      </div>
+      <div style="font-size:0.66rem;color:rgba(255,255,255,0.28);margin-bottom:6px;">⛳ ${hcpInfo}</div>`;
+    for(let h=0;h<18;h++){
+      const r=res[h];
+      const aDot=sA>0&&COURSES[d].si[h]<=sA,bDot=sB>0&&COURSES[d].si[h]<=sB;
+      const runTxt=h<thru?(run[h]===0?'AS':run[h]>0?`${an} ${run[h]}UP`:`${bn} ${Math.abs(run[h])}UP`):'';
+      html+=`<div class="mhrow">
+        <div class="mhnum">${h+1}</div>
+        <button class="mbtn ${r==='a'?MSEL[ai]:''}" onclick="mpSet(${d},${mi},${h},'a')">${an}${aDot?'<span class="mdot"></span>':''}</button>
+        <button class="mbtn ${r==='t'?'st':''}" onclick="mpSet(${d},${mi},${h},'t')">Tie</button>
+        <button class="mbtn ${r==='b'?MSEL[bi]:''}" onclick="mpSet(${d},${mi},${h},'b')">${bn}${bDot?'<span class="mdot"></span>':''}</button>
+        <div class="mrun">${runTxt}</div>
+      </div>`;
+    }
+    html+='</div>';
+  });
+  document.getElementById('mc').innerHTML=html+'</div>';
+}
+function mpSet(d,mi,h,v){G.mp[d][mi][h]=v;saveState();renderMatch();}
+
+// ── Money calcs ────────────────────────────────────────────────
+function calcWolf(d,bet){
+  const m=[0,0,0];
+  for(let h=0;h<18;h++){
+    const wi=h%3,{pi,win}=G.wolf[d][h];
+    if(win===null||pi===-2)continue;
+    const lone=pi===-1,mul=lone?2:1;
+    const opps=[0,1,2].filter(i=>i!==wi&&(lone||i!==pi));
+    if(win){opps.forEach(i=>{m[wi]+=bet*mul;if(!lone)m[pi]+=bet*mul;m[i]-=bet*mul;});}
+    else   {opps.forEach(i=>{m[wi]-=bet*mul;if(!lone)m[pi]-=bet*mul;m[i]+=bet*mul;});}
+  }
+  return m;
+}
+function calc531(d,bet){
+  const tot=[0,0,0];
+  for(let h=0;h<18;h++){
+    pts531(G.names.map((_,pi)=>netSc(d,pi,h))).forEach((p,pi)=>{if(p!==null)tot[pi]+=p;});
+  }
+  const avg=(tot[0]+tot[1]+tot[2])/3;
+  return {m:tot.map(t=>(t-avg)*bet),tot};
+}
+function calcStab(d,bet){
+  const tot=[0,0,0];
+  for(let h=0;h<18;h++){
+    G.names.forEach((_,pi)=>{const pts=stabPts(netSc(d,pi,h),COURSES[d].pars[h]);if(pts!==null)tot[pi]+=pts;});
+  }
+  const mx=Math.max(...tot),m=[0,0,0];
+  const w=tot.map((t,i)=>t===mx?i:-1).filter(i=>i>=0);
+  if(w.length===1){[0,1,2].filter(i=>i!==w[0]).forEach(i=>{m[w[0]]+=bet;m[i]-=bet;});}
+  return {m,tot};
+}
+function calcMP(d,bet){
+  const m=[0,0,0];
+  MU.forEach(([ai,bi],mi)=>{
+    let up=0;G.mp[d][mi].forEach(r=>{if(r==='a')up++;else if(r==='b')up--;});
+    if(up>0){m[ai]+=bet;m[bi]-=bet;}else if(up<0){m[bi]+=bet;m[ai]-=bet;}
+  });
+  return m;
+}
+
+// ── Summary ────────────────────────────────────────────────────
+function fmtN(f){return f==='531'?'5-3-1':f.charAt(0).toUpperCase()+f.slice(1);}
+function renderSum(){
+  upSetup();
+  const b=G.bets,grand=[0,0,0];
+  let html='';
+  for(let d=0;d<3;d++){
+    const fmt=G.fmts[d];
+    let dm=[0,0,0],detail='',pts='';
+    if(fmt==='wolf'){dm=calcWolf(d,b.wolf);detail=`Wolf @ $${b.wolf}/hole`;}
+    else if(fmt==='531'){const r=calc531(d,b.b531);dm=r.m;detail=`5-3-1 @ $${b.b531}/pt`;pts=r.tot.map((t,i)=>G.names[i].split(' ')[0]+':'+t.toFixed(1)).join(' · ');}
+    else{const r=calcStab(d,b.stab);dm=r.m;detail=`Stableford $${b.stab}`;pts=r.tot.map((t,i)=>G.names[i].split(' ')[0]+':'+t).join(' · ');}
+    const mpm=calcMP(d,b.mp);
+    dm.map((v,i)=>v+mpm[i]).forEach((v,i)=>grand[i]+=v);
+    const chLine=G.names.map((n,pi)=>`${n.split(' ')[0]}:${courseHcp(pi,d)}`).join(' · ');
+    html+=`<div class="card"><h3>${COURSES[d].name}</h3>
+      <div class="info">${detail}${pts?' · '+pts:''}<br>Course HCP: ${chLine}</div>`;
+    G.names.forEach((n,pi)=>{
+      const v=dm[pi],cls=v>0?'pos':v<0?'neg':'zer',sg=v>0?'+':'';
+      html+=`<div class="srow"><div class="pn"><div style="width:8px;height:8px;border-radius:50%;background:${C[pi]};"></div><span>${n}</span></div><div class="amt ${cls}">${sg}$${v.toFixed(0)}</div></div>`;
+    });
+    html+=`<div class="sub-sec">+ Match Play ($${b.mp}/match)</div>`;
+    G.names.forEach((n,pi)=>{
+      const v=mpm[pi],cls=v>0?'pos':v<0?'neg':'zer',sg=v>0?'+':'';
+      html+=`<div class="srow" style="padding:5px 0;"><div class="pn"><div style="width:7px;height:7px;border-radius:50%;background:${C[pi]};opacity:0.7;"></div><span style="font-size:0.8rem;">${n}</span></div><div class="amt ${cls}" style="font-size:0.95rem;">${sg}$${v.toFixed(0)}</div></div>`;
+    });
+    html+='</div>';
+  }
+  html+=`<div class="card"><h3>Trip Total</h3>`;
+  [0,1,2].sort((a,b)=>grand[b]-grand[a]).forEach((pi,rank)=>{
+    const v=grand[pi],cls=v>0?'pos':v<0?'neg':'zer',sg=v>0?'+':'';
+    html+=`<div class="lbrow"><div class="rnk ${rank===0?'rnk1':''}">${rank+1}</div><div class="pn"><div style="width:8px;height:8px;border-radius:50%;background:${C[pi]};"></div><span>${G.names[pi]}</span></div><div class="amt ${cls}">${sg}$${v.toFixed(0)}</div></div>`;
+  });
+  document.getElementById('sumc').innerHTML=html+'</div>';
+}
+
+// ── Init ───────────────────────────────────────────────────────
+loadState();
+buildCourseCards();
+buildSIGrid();
+syncSetupFields();
+updateHcpPreviews();
+</script>
+
+</body>
+</html>
